@@ -16,6 +16,9 @@ plugins {
     id("org.sonarqube") version "7.3.1.8318"
 }
 
+
+group = "hexlet.code"
+
 repositories {
     // Use Maven Central for resolving dependencies.
     mavenCentral()
