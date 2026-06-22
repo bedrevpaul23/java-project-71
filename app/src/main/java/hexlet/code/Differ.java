@@ -2,6 +2,8 @@ package hexlet.code;
 
 import hexlet.code.formatters.Formatter;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
 
@@ -14,10 +16,32 @@ public final class Differ {
     }
 
     public static String generate(String firstFilePath, String secondFilePath, String format) throws Exception {
-        Map<String, Object> firstData = Parser.parse(firstFilePath);
-        Map<String, Object> secondData = Parser.parse(secondFilePath);
-        List<Map<String, Object>> diff = DiffBuilder.build(firstData, secondData);
+        String firstData = Files.readString(Path.of(firstFilePath));
+        String secondData = Files.readString(Path.of(secondFilePath));
+
+        Map<String, Object> firstParsedData = Parser.parse(firstData, getDataFormat(firstFilePath));
+        Map<String, Object> secondParsedData = Parser.parse(secondData, getDataFormat(secondFilePath));
+
+        List<Map<String, Object>> diff = DiffBuilder.build(firstParsedData, secondParsedData);
 
         return Formatter.format(diff, format);
+    }
+
+    private static String getDataFormat(String filePath) {
+        String normalizedPath = filePath.toLowerCase();
+
+        if (normalizedPath.endsWith(".json")) {
+            return "json";
+        }
+
+        if (normalizedPath.endsWith(".yml")) {
+            return "yml";
+        }
+
+        if (normalizedPath.endsWith(".yaml")) {
+            return "yaml";
+        }
+
+        throw new IllegalArgumentException("Unsupported data format");
     }
 }

@@ -10,4 +10,4 @@ lint:
 	./gradlew checkstyleMain checkstyleTest
 
 run-dist:
-	./app/build/install/app/bin/app
+	./build/install/app/bin/app

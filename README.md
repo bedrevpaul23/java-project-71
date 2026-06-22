@@ -31,20 +31,23 @@ Supported output formats:
 ## Build
 
 ```bash
+cd app
 make build
 ```
 
 ## Run
 
 ```bash
+cd app
 ./gradlew installDist
-./app/build/install/app/bin/app app/src/test/resources/file1.json app/src/test/resources/file2.json
+./build/install/app/bin/app src/test/resources/file1.json src/test/resources/file2.json
 ```
 
 ## Usage
 
 ```bash
-./app/build/install/app/bin/app [-f=format] filepath1 filepath2
+cd app
+./build/install/app/bin/app [-f=format] filepath1 filepath2
 ```
 
 The default output format is `stylish`.
@@ -52,7 +55,8 @@ The default output format is `stylish`.
 ## Stylish output
 
 ```bash
-./app/build/install/app/bin/app app/src/test/resources/file1.json app/src/test/resources/file2.json
+cd app
+./build/install/app/bin/app src/test/resources/file1.json src/test/resources/file2.json
 ```
 
 ```text
@@ -69,7 +73,8 @@ The default output format is `stylish`.
 ## Plain output
 
 ```bash
-./app/build/install/app/bin/app -f plain app/src/test/resources/nested_file1.json app/src/test/resources/nested_file2.json
+cd app
+./build/install/app/bin/app -f plain src/test/resources/nested_file1.json src/test/resources/nested_file2.json
 ```
 
 ```text
@@ -91,7 +96,8 @@ Property 'setting3' was updated. From true to 'none'
 ## JSON output
 
 ```bash
-./app/build/install/app/bin/app -f json app/src/test/resources/nested_file1.json app/src/test/resources/nested_file2.json
+cd app
+./build/install/app/bin/app -f json src/test/resources/nested_file1.json src/test/resources/nested_file2.json
 ```
 
 ```json

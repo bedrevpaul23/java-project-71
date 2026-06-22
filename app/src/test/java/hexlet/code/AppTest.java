@@ -12,53 +12,49 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class AppTest {
-    private static final String EXPECTED = """
-            {
-              - follow: false
-                host: hexlet.io
-              - proxy: 123.234.53.22
-              - timeout: 50
-              + timeout: 20
-              + verbose: true
-            }""";
+    private static final String RESOURCES_PATH = "src/test/resources/";
 
     @Test
-    void testGenerateJson() throws Exception {
+    void testGenerateDefaultJson() throws Exception {
+        String expected = readExpected("expected_nested_stylish.txt");
         String result = Differ.generate(
-                "src/test/resources/file1.json",
-                "src/test/resources/file2.json"
-        );
-
-        assertEquals(EXPECTED, result);
-    }
-
-    @Test
-    void testGenerateYaml() throws Exception {
-        String result = Differ.generate(
-                "src/test/resources/file1.yml",
-                "src/test/resources/file2.yml"
-        );
-
-        assertEquals(EXPECTED, result);
-    }
-
-    @Test
-    void testGenerateNestedJson() throws Exception {
-        String expected = Files.readString(Path.of("src/test/resources/expected_nested_stylish.txt")).trim();
-        String result = Differ.generate(
-                "src/test/resources/nested_file1.json",
-                "src/test/resources/nested_file2.json"
+                getResourcePath("nested_file1.json"),
+                getResourcePath("nested_file2.json")
         );
 
         assertEquals(expected, result);
     }
 
     @Test
-    void testGenerateNestedYaml() throws Exception {
-        String expected = Files.readString(Path.of("src/test/resources/expected_nested_stylish.txt")).trim();
+    void testGenerateDefaultYaml() throws Exception {
+        String expected = readExpected("expected_nested_stylish.txt");
         String result = Differ.generate(
-                "src/test/resources/nested_file1.yml",
-                "src/test/resources/nested_file2.yml"
+                getResourcePath("nested_file1.yml"),
+                getResourcePath("nested_file2.yml")
+        );
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testGenerateStylishJson() throws Exception {
+        String expected = readExpected("expected_nested_stylish.txt");
+        String result = Differ.generate(
+                getResourcePath("nested_file1.json"),
+                getResourcePath("nested_file2.json"),
+                "stylish"
+        );
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testGenerateStylishYaml() throws Exception {
+        String expected = readExpected("expected_nested_stylish.txt");
+        String result = Differ.generate(
+                getResourcePath("nested_file1.yml"),
+                getResourcePath("nested_file2.yml"),
+                "stylish"
         );
 
         assertEquals(expected, result);
@@ -66,10 +62,10 @@ class AppTest {
 
     @Test
     void testGeneratePlainJson() throws Exception {
-        String expected = Files.readString(Path.of("src/test/resources/expected_plain.txt")).trim();
+        String expected = readExpected("expected_plain.txt");
         String result = Differ.generate(
-                "src/test/resources/nested_file1.json",
-                "src/test/resources/nested_file2.json",
+                getResourcePath("nested_file1.json"),
+                getResourcePath("nested_file2.json"),
                 "plain"
         );
 
@@ -78,65 +74,52 @@ class AppTest {
 
     @Test
     void testGeneratePlainYaml() throws Exception {
-        String expected = Files.readString(Path.of("src/test/resources/expected_plain.txt")).trim();
+        String expected = readExpected("expected_plain.txt");
         String result = Differ.generate(
-                "src/test/resources/nested_file1.yml",
-                "src/test/resources/nested_file2.yml",
+                getResourcePath("nested_file1.yml"),
+                getResourcePath("nested_file2.yml"),
                 "plain"
         );
 
         assertEquals(expected, result);
     }
 
-
     @Test
     void testGenerateJsonFormatJson() throws Exception {
+        String expected = readExpected("expected_json.txt");
         String result = Differ.generate(
-                "src/test/resources/nested_file1.json",
-                "src/test/resources/nested_file2.json",
+                getResourcePath("nested_file1.json"),
+                getResourcePath("nested_file2.json"),
                 "json"
         );
 
-        List<Map<String, Object>> diff = parseJson(result);
-
-        assertEquals("changed", findNode(diff, "chars2").get("status"));
-        assertEquals("removed", findNode(diff, "key1").get("status"));
-        assertEquals("added", findNode(diff, "key2").get("status"));
-        assertEquals("added", findNode(diff, "obj1").get("status"));
+        assertEquals(parseJson(expected), parseJson(result));
     }
 
     @Test
     void testGenerateJsonFormatYaml() throws Exception {
+        String expected = readExpected("expected_json.txt");
         String result = Differ.generate(
-                "src/test/resources/nested_file1.yml",
-                "src/test/resources/nested_file2.yml",
+                getResourcePath("nested_file1.yml"),
+                getResourcePath("nested_file2.yml"),
                 "json"
         );
 
-        List<Map<String, Object>> diff = parseJson(result);
-
-        assertEquals("changed", findNode(diff, "chars2").get("status"));
-        assertEquals("removed", findNode(diff, "key1").get("status"));
-        assertEquals("added", findNode(diff, "key2").get("status"));
-        assertEquals("added", findNode(diff, "obj1").get("status"));
+        assertEquals(parseJson(expected), parseJson(result));
     }
 
-
-    private static Map<String, Object> findNode(List<Map<String, Object>> diff, String key) {
-        for (Map<String, Object> node : diff) {
-            if (key.equals(node.get("key"))) {
-                return node;
-            }
-        }
-
-        throw new IllegalArgumentException("Node not found: " + key);
+    private static String getResourcePath(String fileName) {
+        return RESOURCES_PATH + fileName;
     }
 
-    private static List<Map<String, Object>> parseJson(String content) throws Exception {
+    private static String readExpected(String fileName) throws Exception {
+        return Files.readString(Path.of(getResourcePath(fileName))).trim();
+    }
+
+    private static List<Map<String, Object>> parseJson(String data) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
 
-        return mapper.readValue(content, new TypeReference<>() {
+        return mapper.readValue(data, new TypeReference<>() {
         });
     }
-
 }
