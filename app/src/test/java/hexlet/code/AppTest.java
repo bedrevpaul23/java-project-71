@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AppTest {
     private static final String RESOURCES_PATH = "src/test/resources/";
@@ -106,6 +107,35 @@ class AppTest {
         );
 
         assertEquals(parseJson(expected), parseJson(result));
+    }
+
+
+    @Test
+    void testGenerateDefaultYamlLongExtension() throws Exception {
+        String expected = readExpected("expected_nested_stylish.txt");
+        String result = Differ.generate(
+                getResourcePath("nested_file1.yaml"),
+                getResourcePath("nested_file2.yaml")
+        );
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void testGenerateUnsupportedInputFormat() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> Differ.generate(
+                getResourcePath("expected_plain.txt"),
+                getResourcePath("nested_file2.json")
+        ));
+
+        assertEquals("Unsupported data format", exception.getMessage());
+    }
+
+    @Test
+    void testParserUnsupportedDataFormat() {
+        Exception exception = assertThrows(IllegalArgumentException.class, () -> Parser.parse("{}", "xml"));
+
+        assertEquals("Unsupported data format: xml", exception.getMessage());
     }
 
     private static String getResourcePath(String fileName) {
