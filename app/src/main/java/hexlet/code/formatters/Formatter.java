@@ -8,18 +8,11 @@ public final class Formatter {
     }
 
     public static String format(List<Map<String, Object>> diff, String format) throws Exception {
-        if ("stylish".equals(format)) {
-            return Stylish.format(diff);
-        }
-
-        if ("plain".equals(format)) {
-            return Plain.format(diff);
-        }
-
-        if ("json".equals(format)) {
-            return Json.format(diff);
-        }
-
-        throw new IllegalArgumentException("Unknown format: " + format);
+        return switch (format) {
+            case "stylish" -> Stylish.format(diff);
+            case "plain" -> Plain.format(diff);
+            case "json" -> Json.format(diff);
+            default -> throw new IllegalArgumentException("Unknown format: " + format);
+        };
     }
 }

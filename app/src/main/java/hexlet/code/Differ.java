@@ -19,29 +19,15 @@ public final class Differ {
         String firstData = Files.readString(Path.of(firstFilePath));
         String secondData = Files.readString(Path.of(secondFilePath));
 
-        Map<String, Object> firstParsedData = Parser.parse(firstData, getDataFormat(firstFilePath));
-        Map<String, Object> secondParsedData = Parser.parse(secondData, getDataFormat(secondFilePath));
+        Map<String, Object> firstParsedData = Parser.parse(firstData, getFileExtension(firstFilePath));
+        Map<String, Object> secondParsedData = Parser.parse(secondData, getFileExtension(secondFilePath));
 
         List<Map<String, Object>> diff = DiffBuilder.build(firstParsedData, secondParsedData);
 
         return Formatter.format(diff, format);
     }
 
-    private static String getDataFormat(String filePath) {
-        String normalizedPath = filePath.toLowerCase();
-
-        if (normalizedPath.endsWith(".json")) {
-            return "json";
-        }
-
-        if (normalizedPath.endsWith(".yml")) {
-            return "yml";
-        }
-
-        if (normalizedPath.endsWith(".yaml")) {
-            return "yaml";
-        }
-
-        throw new IllegalArgumentException("Unsupported data format");
+    private static String getFileExtension(String filePath) {
+        return filePath.substring(filePath.lastIndexOf(".") + 1).toLowerCase();
     }
 }

@@ -1,13 +1,9 @@
 package hexlet.code;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -94,7 +90,7 @@ class AppTest {
                 "json"
         );
 
-        assertEquals(parseJson(expected), parseJson(result));
+        assertEquals(expected, result);
     }
 
     @Test
@@ -106,9 +102,8 @@ class AppTest {
                 "json"
         );
 
-        assertEquals(parseJson(expected), parseJson(result));
+        assertEquals(expected, result);
     }
-
 
     @Test
     void testGenerateDefaultYamlLongExtension() throws Exception {
@@ -128,7 +123,7 @@ class AppTest {
                 getResourcePath("nested_file2.json")
         ));
 
-        assertEquals("Unsupported data format", exception.getMessage());
+        assertEquals("Unsupported data format: txt", exception.getMessage());
     }
 
     @Test
@@ -144,12 +139,5 @@ class AppTest {
 
     private static String readExpected(String fileName) throws Exception {
         return Files.readString(Path.of(getResourcePath(fileName))).trim();
-    }
-
-    private static List<Map<String, Object>> parseJson(String data) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-
-        return mapper.readValue(data, new TypeReference<>() {
-        });
     }
 }
